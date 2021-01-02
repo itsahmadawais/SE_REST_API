@@ -1,0 +1,80 @@
+
+# $Id: .htaccess 9977 2013-03-19 20:51:56Z john $
+
+<IfModule mod_rewrite.c>
+  Options +FollowSymLinks
+  RewriteEngine On
+
+  RewriteCond %{HTTP_HOST} ^www\.(.*)$ [NC]
+  RewriteRule ^(.*)$ http://%1/$1 [R=301,L]
+
+  RewriteCond %{HTTPS} off
+  RewriteRule (.*) https://%{HTTP_HOST}%{REQUEST_URI} [R,L]
+
+  # Get rid of index.php
+  RewriteCond %{REQUEST_URI} /index\.php
+  RewriteRule (.*) index.php?rewrite=2 [L,QSA]
+
+  # Rewrite all directory-looking urls
+  RewriteCond %{REQUEST_URI} /$
+  RewriteRule (.*) index.php?rewrite=1 [L,QSA]
+
+  # Try to route missing files
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{REQUEST_FILENAME} public\/ [OR]
+  RewriteCond %{REQUEST_FILENAME} \.(jpg|gif|png|ico|flv|htm|html|php|css|js)$
+  RewriteRule . - [L]
+
+  # If the file doesn't exist, rewrite to index
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteRule ^(.*)$ index.php?rewrite=1 [L,QSA]
+
+</IfModule>
+
+# sends requests /index.php/path/to/module/ to "index.php"
+# AcceptPathInfo On
+
+# @todo This may not be effective in some cases
+FileETag Size
+
+<IfModule mod_deflate.c>
+  AddOutputFilterByType DEFLATE text/text text/html text/plain text/xml text/css application/x-javascript application/javascript
+</IfModule>
+
+# BEGIN cPanel-generated php ini directives, do not edit
+# Manual editing of this file may result in unexpected behavior.
+# To make changes to this file, use the cPanel MultiPHP INI Editor (Home >> Software >> MultiPHP INI Editor)
+# For more information, read our documentation (https://go.cpanel.net/EA4ModifyINI)
+<IfModule php7_module>
+   php_flag display_errors On
+   php_value max_execution_time 18000
+   php_value max_input_time 18000
+   php_value max_input_vars 4000
+   php_value memory_limit 3072M
+   php_value post_max_size 64M
+   php_value session.gc_maxlifetime 3600
+   php_value session.save_path "/var/cpanel/php/sessions/ea-php71"
+   php_value upload_max_filesize 64M
+   php_flag zlib.output_compression Off
+</IfModule>
+<IfModule lsapi_module>
+   php_flag display_errors On
+   php_value max_execution_time 18000
+   php_value max_input_time 18000
+   php_value max_input_vars 4000
+   php_value memory_limit 3072M
+   php_value post_max_size 64M
+   php_value session.gc_maxlifetime 3600
+   php_value session.save_path "/var/cpanel/php/sessions/ea-php71"
+   php_value upload_max_filesize 64M
+   php_flag zlib.output_compression Off
+</IfModule>
+# END cPanel-generated php ini directives, do not edit
+
+# php -- BEGIN cPanel-generated handler, do not edit
+# Set the “ea-php72” package as the default “PHP” programming language.
+<IfModule mime_module>
+  AddHandler application/x-httpd-ea-php72 .php .php7 .phtml
+</IfModule>
+# php -- END cPanel-generated handler, do not edit
